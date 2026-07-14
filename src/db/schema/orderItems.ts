@@ -21,7 +21,6 @@ export const orderItems = pgTable("order_items", {
   unitPrice: numeric("unit_price").notNull(),
   quantity: integer("quantity").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
