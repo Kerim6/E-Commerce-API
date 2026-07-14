@@ -4,7 +4,7 @@ import { users } from "./users.ts";
 import { orderItems } from "./orderItems.ts";
 import { orderAddresses } from "./orderAddresses.ts";
 
-const statusEnum = pgEnum("statusEnum", [
+export const statusEnum = pgEnum("statusEnum", [
   "pending",
   "processing",
   "shipped",

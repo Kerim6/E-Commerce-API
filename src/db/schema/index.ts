@@ -1,3 +1,7 @@
+// Export all enums
+export { roleEnum } from "./users.ts";
+export { statusEnum } from "./orders.ts";
+
 // Export all schemas
 export { users, usersRelations } from "./users.ts";
 export { categories, categoriesRelations } from "./categories.ts";
