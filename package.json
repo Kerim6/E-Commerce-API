@@ -8,7 +8,12 @@
     "start": "node src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "cross-env NODE_ENV=development APP_STAGE=dev tsx src/db/seed.ts"
   },
   "keywords": [],
   "author": "",
