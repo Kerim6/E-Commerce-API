@@ -7,9 +7,9 @@ import {
   unique,
   check,
 } from "drizzle-orm/pg-core";
+import { sql, relations } from "drizzle-orm";
 import { users } from "./users.ts";
 import { products } from "./products.ts";
-import { sql } from "drizzle-orm";
 
 export const reviews = pgTable(
   "reviews",
@@ -34,3 +34,14 @@ export const reviews = pgTable(
     ),
   ],
 );
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [reviews.productId],
+    references: [products.id],
+  }),
+}));

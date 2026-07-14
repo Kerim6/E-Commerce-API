@@ -1,4 +1,5 @@
 import { pgTable, uuid, timestamp, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { orders } from "./orders.ts";
 
 export const orderAddresses = pgTable("order_addresses", {
@@ -12,3 +13,10 @@ export const orderAddresses = pgTable("order_addresses", {
   postalCode: varchar("postal_code", { length: 50 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const orderAddressesRelations = relations(orderAddresses, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderAddresses.orderId],
+    references: [orders.id],
+  }),
+}));

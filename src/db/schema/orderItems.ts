@@ -6,6 +6,7 @@ import {
   integer,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { orders } from "./orders.ts";
 import { products } from "./products.ts";
 
@@ -22,3 +23,14 @@ export const orderItems = pgTable("order_items", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));

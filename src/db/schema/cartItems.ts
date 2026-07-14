@@ -1,7 +1,7 @@
 import { pgTable, uuid, integer, check, unique } from "drizzle-orm/pg-core";
 import { carts } from "./carts.ts";
 import { products } from "./products.ts";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 
 export const cartItems = pgTable(
   "cart_items",
@@ -20,3 +20,14 @@ export const cartItems = pgTable(
     unique("cart_product_unique").on(table.cartId, table.productId),
   ],
 );
+
+export const cartItemsRelations = relations(cartItems, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cartItems.cartId],
+    references: [carts.id],
+  }),
+  product: one(products, {
+    fields: [cartItems.productId],
+    references: [products.id],
+  }),
+}));

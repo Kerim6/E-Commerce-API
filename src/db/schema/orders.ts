@@ -1,5 +1,8 @@
 import { pgTable, uuid, pgEnum, numeric, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { users } from "./users.ts";
+import { orderItems } from "./orderItems.ts";
+import { orderAddresses } from "./orderAddresses.ts";
 
 const statusEnum = pgEnum("statusEnum", [
   "pending",
@@ -19,3 +22,12 @@ export const orders = pgTable("orders", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
+  items: many(orderItems),
+  address: one(orderAddresses),
+}));

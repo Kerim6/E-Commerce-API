@@ -8,8 +8,12 @@ import {
   timestamp,
   check,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { categories } from "./categories.ts";
+import { productImages } from "./product_images.ts";
+import { cartItems } from "./cartItems.ts";
+import { orderItems } from "./orderItems.ts";
+import { reviews } from "./reviews.ts";
 
 export const products = pgTable(
   "products",
@@ -32,3 +36,14 @@ export const products = pgTable(
     check("stock_non_negative_check", sql`${table.stock} >=0`),
   ],
 );
+
+export const productsRelations = relations(products, ({ one, many }) => ({
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
+  images: many(productImages),
+  cartItems: many(cartItems),
+  orderItems: many(orderItems),
+  reviews: many(reviews),
+}));

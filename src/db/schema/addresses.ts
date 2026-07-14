@@ -5,6 +5,7 @@ import {
   varchar,
   boolean,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { users } from "./users.ts";
 
 export const addresses = pgTable("addresses", {
@@ -20,3 +21,10 @@ export const addresses = pgTable("addresses", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const addressesRelations = relations(addresses, ({ one }) => ({
+  user: one(users, {
+    fields: [addresses.userId],
+    references: [users.id],
+  }),
+}));
