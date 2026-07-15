@@ -29,3 +29,4 @@ import { reviews } from "./reviews.ts";
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Role = (typeof roleEnum.enumValues)[number];
