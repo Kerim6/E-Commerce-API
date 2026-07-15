@@ -9,7 +9,7 @@ export const findByEmail = async (email: string) => {
   });
 };
 
-export const create = async (user: NewUser) => {
+export const create = async (user: Omit<NewUser, "role">) => {
   const [createdUser] = await db.insert(users).values(user).returning();
   return createdUser;
 };

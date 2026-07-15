@@ -3,7 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import { env, isTestEnv } from "../env.ts";
 import morgan from "morgan";
-import { registeration } from "./modules/auth/authController.ts";
+import authRoutes from "./modules/auth/authRoutes.ts";
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.get("/health", (req, res) => {
     .json({ status: "OK", timestamp: new Date(), service: "E-Commerce API" });
 });
 
-app.use("/api/v1/auth", registeration);
+app.use("/api/v1/auth", authRoutes);
 
 export { app };
 export default app;
