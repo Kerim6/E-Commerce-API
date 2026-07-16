@@ -19,6 +19,12 @@ export const findCategoryById = async (id: string) => {
   return await db.query.categories.findFirst({ where: eq(categories.id, id) })
 }
 
+export const findCategoryByName = async (name: string) => {
+  return await db.query.categories.findFirst({
+    where: eq(categories.name, name),
+  })
+}
+
 export const findCategoryBySlug = async (slug: string) => {
   return await db.query.categories.findFirst({
     where: eq(categories.slug, slug),
