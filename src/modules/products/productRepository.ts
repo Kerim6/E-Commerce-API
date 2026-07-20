@@ -12,9 +12,21 @@ export const findProducts = async () => {
   return await db.select().from(products)
 }
 
-export const findProduct = async (id: string) => {
+export const findProductById = async (id: string) => {
   return await db.query.products.findFirst({
     where: eq(products.id, id),
+  })
+}
+
+export const findProductByName = async (name: string) => {
+  return await db.query.products.findFirst({
+    where: eq(products.name, name),
+  })
+}
+
+export const findProductBySlug = async (slug: string) => {
+  return await db.query.products.findFirst({
+    where: eq(products.slug, slug),
   })
 }
 
