@@ -5,6 +5,7 @@ import { env, isTestEnv } from '../env.ts'
 import morgan from 'morgan'
 import authRoutes from './modules/auth/authRoutes.ts'
 import categoryRoutes from './modules/categories/categoryRoutes.ts'
+import productRoutes from './modules/products/productRoutes.ts'
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/category', categoryRoutes)
+app.use('/api/v1/product', productRoutes)
 
 export { app }
 export default app
