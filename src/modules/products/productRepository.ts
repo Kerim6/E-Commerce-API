@@ -1,9 +1,9 @@
-import type { ProductInput } from './productTypes.ts'
 import { products } from '../../db/schema/products.ts'
 import { db } from '../../db/connection.ts'
 import { eq } from 'drizzle-orm'
+import type { NewProduct, UpdateProduct } from './productTypes.ts'
 
-export const createProduct = async (product: ProductInput) => {
+export const createProduct = async (product: NewProduct) => {
   const [createdProduct] = await db.insert(products).values(product).returning()
   return createdProduct
 }
@@ -30,7 +30,7 @@ export const findProductBySlug = async (slug: string) => {
   })
 }
 
-export const updateProduct = async (product: ProductInput, id: string) => {
+export const updateProduct = async (product: UpdateProduct, id: string) => {
   const [updatedProduct] = await db
     .update(products)
     .set(product)

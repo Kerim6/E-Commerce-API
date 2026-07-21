@@ -1,4 +1,4 @@
-import { productCreateSchema } from './productValidators.ts'
-import { z } from 'zod'
+import { products } from '../../db/schema/products.ts'
 
-export type ProductInput = z.infer<typeof productCreateSchema>
+export type NewProduct = typeof products.$inferInsert
+export type UpdateProduct = Partial<NewProduct>
