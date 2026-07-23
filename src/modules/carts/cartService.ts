@@ -56,7 +56,9 @@ export const getCartService = async (userId: string) => {
 }
 
 export const updateCartItemQuantityService = async (
-  input: UpdateCartInput,
+  // input: UpdateCartInput,
+  itemId: string,
+  quantity: number,
   userId: string,
 ) => {
   const cart = await findCartByUserId(userId)
@@ -65,7 +67,7 @@ export const updateCartItemQuantityService = async (
     throw new NotFoundError('Cart not found')
   }
 
-  const item = await findCartItemById(input.itemId)
+  const item = await findCartItemById(itemId)
 
   if (!item) {
     throw new NotFoundError('Cart item not found')
@@ -75,9 +77,9 @@ export const updateCartItemQuantityService = async (
     throw new ForbiddenError('You are not allowed to access')
   }
 
-  if (input.quantity > item.product.stock) {
+  if (quantity > item.product.stock) {
     throw new ConflictError('The required quantity is not available')
   }
 
-  return updateCartItemQuantity(item.id, input.quantity)
+  return updateCartItemQuantity(item.id, quantity)
 }

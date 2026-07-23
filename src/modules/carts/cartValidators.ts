@@ -9,3 +9,11 @@ export const addItemToCartSchema = z.object({
   productId: uuid(),
   quantity: z.coerce.number(),
 })
+
+export const uuidSchema = z.object({
+  id: uuid(),
+})
+
+export const quantitySchema = z.object({
+  quantity: z.coerce.number(),
+})

@@ -1,6 +1,10 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../../middleware/auth.ts'
-import { addItemToCart, getCartService } from './cartService.ts'
+import {
+  addItemToCart,
+  getCartService,
+  updateCartItemQuantityService,
+} from './cartService.ts'
 import { UnauthorizedError } from '../../errors/UnauthorizedError.ts'
 
 export const addItemToCartController = async (
@@ -29,4 +33,25 @@ export const getCartController = async (
   const getCart = await getCartService(userId)
 
   return res.status(200).json(getCart)
+}
+
+export const updateCartItemQuantityController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const paramId = req.params.id
+  const { quantity } = req.body
+  const userId = req.user?.id
+
+  if (!userId) {
+    throw new UnauthorizedError('Unauthenticated')
+  }
+
+  const updatedQuantity = await updateCartItemQuantityService(
+    paramId,
+    quantity,
+    userId,
+  )
+
+  return res.status(200).json(updatedQuantity)
 }

@@ -35,7 +35,7 @@ export const createCartItem = async (cartItem: NewCartItem) => {
 export const updateCartItemQuantity = async (id: string, quantity: number) => {
   const [updatedCartItemQuantity] = await db
     .update(cartItems)
-    .set({ quantity })
+    .set({ quantity: quantity })
     .where(eq(cartItems.id, id))
     .returning()
 
