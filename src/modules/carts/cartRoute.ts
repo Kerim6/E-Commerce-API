@@ -8,6 +8,7 @@ import {
 } from './cartValidators.ts'
 import {
   addItemToCartController,
+  deleteCartItemController,
   getCartController,
   updateCartItemQuantityController,
 } from './cartController.ts'
@@ -31,6 +32,13 @@ router.patch(
   validateRequest('body', quantitySchema),
   authorize('admin', 'user'),
   updateCartItemQuantityController,
+)
+
+router.delete(
+  '/:id',
+  validateRequest('params', uuidSchema),
+  authorize('admin', 'user'),
+  deleteCartItemController,
 )
 
 export default router

@@ -5,6 +5,7 @@ import { findProductById } from '../products/productRepository.ts'
 import {
   createCart,
   createCartItem,
+  deleteCartItem,
   findCartByUserId,
   findCartItem,
   findCartItemById,
@@ -82,4 +83,14 @@ export const updateCartItemQuantityService = async (
   }
 
   return updateCartItemQuantity(item.id, quantity)
+}
+
+export const deleteCartItemService = async (itemId: string) => {
+  const item = await findCartItemById(itemId)
+
+  if (!item) {
+    throw new NotFoundError('Item not found')
+  }
+
+  return deleteCartItem(item.id)
 }

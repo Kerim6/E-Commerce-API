@@ -2,6 +2,7 @@ import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../../middleware/auth.ts'
 import {
   addItemToCart,
+  deleteCartItemService,
   getCartService,
   updateCartItemQuantityService,
 } from './cartService.ts'
@@ -54,4 +55,14 @@ export const updateCartItemQuantityController = async (
   )
 
   return res.status(200).json(updatedQuantity)
+}
+
+export const deleteCartItemController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const paramId = req.params.id
+  const deletedItem = await deleteCartItemService(paramId)
+
+  return res.status(204).json(deletedItem)
 }
