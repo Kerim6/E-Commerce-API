@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import authRoutes from './modules/auth/authRoutes.ts'
 import categoryRoutes from './modules/categories/categoryRoutes.ts'
 import productRoutes from './modules/products/productRoutes.ts'
+import cartRoutes from './modules/carts/cartRoute.ts'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.get('/health', (req, res) => {
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/product', productRoutes)
+app.use('/api/v1/item', cartRoutes)
 
 export { app }
 export default app
