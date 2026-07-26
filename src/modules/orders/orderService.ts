@@ -3,7 +3,12 @@ import { ConflictError } from '../../errors/ConflictError .ts'
 import { NotFoundError } from '../../errors/NotFoundError.ts'
 import { deleteCartItem, findCartWithItems } from '../carts/cartRepository.ts'
 import { updateProductStock } from '../products/productRepository.ts'
-import { createOrder, createOrderItem, getOrders } from './orderRepository.ts'
+import {
+  createOrder,
+  createOrderItem,
+  getOrder,
+  getOrders,
+} from './orderRepository.ts'
 
 export const checkoutService = async (userId: string) => {
   const checkoutTransaction = await db.transaction(async (tx) => {
@@ -69,4 +74,14 @@ export const getOrdersService = async (userId: string) => {
   }
 
   return orders
+}
+
+export const getOrderService = async (orderId: string, userId: string) => {
+  const order = await getOrder(orderId, userId)
+
+  if (!order) {
+    throw new NotFoundError('Order not found')
+  }
+
+  return order
 }

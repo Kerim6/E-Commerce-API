@@ -1,6 +1,10 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../../middleware/auth.ts'
-import { checkoutService, getOrdersService } from './orderService.ts'
+import {
+  checkoutService,
+  getOrderService,
+  getOrdersService,
+} from './orderService.ts'
 import { UnauthorizedError } from '../../errors/UnauthorizedError.ts'
 
 export const checkoutController = async (
@@ -31,4 +35,20 @@ export const getOrdersController = async (
   const orders = await getOrdersService(userId)
 
   return res.status(200).json(orders)
+}
+
+export const getOrderController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const userId = req.user?.id
+  const orderId = req.params.id
+
+  if (!userId) {
+    throw new UnauthorizedError('Unauthenticated')
+  }
+
+  const order = await getOrderService(orderId, userId)
+
+  return res.status(200).json(order)
 }
