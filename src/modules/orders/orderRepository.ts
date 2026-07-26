@@ -1,6 +1,7 @@
 import { db } from '../../db/connection.ts'
 import { orderItems } from '../../db/schema/orderItems.ts'
 import { orders } from '../../db/schema/orders.ts'
+import { eq } from 'drizzle-orm'
 
 type DatabaseLike =
   | typeof db
@@ -38,4 +39,10 @@ export const createOrderItem = async (
     .returning()
 
   return createdItem
+}
+
+export const getOrders = async (userId: string) => {
+  return await db.query.orders.findMany({
+    where: eq(orders.userId, userId),
+  })
 }
