@@ -1,6 +1,7 @@
 import { authenticate, authorize } from '../../middleware/auth.ts'
 import { Router } from 'express'
 import {
+  cancelOrderController,
   checkoutController,
   getOrderController,
   getOrdersController,
@@ -21,6 +22,13 @@ router.get(
   validateRequest('params', uuidSchema),
   authorize('admin', 'user'),
   getOrderController,
+)
+
+router.patch(
+  '/:id/cancel',
+  validateRequest('params', uuidSchema),
+  authorize('admin', 'user'),
+  cancelOrderController,
 )
 
 export default router

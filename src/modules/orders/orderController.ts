@@ -1,6 +1,7 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../../middleware/auth.ts'
 import {
+  cancelOrderService,
   checkoutService,
   getOrderService,
   getOrdersService,
@@ -51,4 +52,21 @@ export const getOrderController = async (
   const order = await getOrderService(orderId, userId)
 
   return res.status(200).json(order)
+}
+
+export const cancelOrderController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const userId = req.user?.id
+  const userRole = req.user?.role
+  const orderId = req.params.id
+
+  if (!userId || !userRole) {
+    throw new UnauthorizedError('Please login in first')
+  }
+
+  const cancelOrder = await cancelOrderService(orderId, userId, userRole)
+
+  return res.status(200).json(cancelOrder)
 }

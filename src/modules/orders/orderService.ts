@@ -1,13 +1,16 @@
 import { db } from '../../db/connection.ts'
 import { ConflictError } from '../../errors/ConflictError .ts'
+import { ForbiddenError } from '../../errors/ForbiddenError.ts'
 import { NotFoundError } from '../../errors/NotFoundError.ts'
 import { deleteCartItem, findCartWithItems } from '../carts/cartRepository.ts'
 import { updateProductStock } from '../products/productRepository.ts'
 import {
   createOrder,
   createOrderItem,
+  findOrderByIdWithItems,
   getOrder,
   getOrders,
+  updateOrderStatus,
 } from './orderRepository.ts'
 
 export const checkoutService = async (userId: string) => {
@@ -84,4 +87,39 @@ export const getOrderService = async (orderId: string, userId: string) => {
   }
 
   return order
+}
+
+export const cancelOrderService = async (
+  orderId: string,
+  userId: string,
+  userRole: string,
+) => {
+  const order = await findOrderByIdWithItems(orderId)
+
+  if (!order) {
+    throw new NotFoundError('Order not found')
+  }
+
+  if (userRole !== 'admin' && order.userId !== userId) {
+    throw new ForbiddenError('You are not allowed to access this order')
+  }
+
+  if (
+    order.status === 'shipped' ||
+    order.status === 'cancelled' ||
+    order.status === 'delivered'
+  ) {
+    throw new ForbiddenError('You can not cancel this order')
+  }
+
+  const cancelTransaction = await db.transaction(async (tx) => {
+    for (const item of order.items) {
+      const remainingStock = item.product.stock + item.quantity
+      await updateProductStock(item.productId, remainingStock, tx)
+    }
+    await updateOrderStatus(order.id, 'cancelled', tx)
+
+    return getOrder(order.id, userId, tx)
+  })
+  return cancelTransaction
 }
