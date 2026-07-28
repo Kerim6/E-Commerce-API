@@ -5,8 +5,10 @@ import {
   checkoutService,
   getOrderService,
   getOrdersService,
+  updateOrderStatusService,
 } from './orderService.ts'
 import { UnauthorizedError } from '../../errors/UnauthorizedError.ts'
+import { stat } from 'fs'
 
 export const checkoutController = async (
   req: AuthenticatedRequest,
@@ -69,4 +71,15 @@ export const cancelOrderController = async (
   const cancelOrder = await cancelOrderService(orderId, userId, userRole)
 
   return res.status(200).json(cancelOrder)
+}
+
+export const updateOrderStatusController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const orderId = req.params.id
+  const { status } = req.body
+  const updatedStatus = await updateOrderStatusService(orderId, status)
+
+  return res.status(200).json(updatedStatus)
 }

@@ -5,9 +5,10 @@ import {
   checkoutController,
   getOrderController,
   getOrdersController,
+  updateOrderStatusController,
 } from './orderController.ts'
 import { validateRequest } from '../../middleware/validation.ts'
-import { uuidSchema } from './orderValidator.ts'
+import { uuidSchema, orderStatusSchema } from './orderValidator.ts'
 
 const router = Router()
 
@@ -29,6 +30,14 @@ router.patch(
   validateRequest('params', uuidSchema),
   authorize('admin', 'user'),
   cancelOrderController,
+)
+
+router.patch(
+  '/:id/status',
+  validateRequest('params', uuidSchema),
+  validateRequest('body', orderStatusSchema),
+  authorize('admin'),
+  updateOrderStatusController,
 )
 
 export default router

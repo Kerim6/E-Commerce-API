@@ -79,13 +79,13 @@ export const updateOrderStatus = async (
   status: OrderStatusInput,
   database: DatabaseLike = db,
 ) => {
-  const [updatedStock] = await database
+  const [updatedStatus] = await database
     .update(orders)
     .set({ status: status })
     .where(eq(orders.id, orderId))
     .returning()
 
-  return updatedStock
+  return updatedStatus
 }
 
 export const findOrderByIdWithItems = async (

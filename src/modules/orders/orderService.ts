@@ -2,7 +2,11 @@ import { db } from '../../db/connection.ts'
 import { ConflictError } from '../../errors/ConflictError .ts'
 import { ForbiddenError } from '../../errors/ForbiddenError.ts'
 import { NotFoundError } from '../../errors/NotFoundError.ts'
-import { deleteCartItem, findCartWithItems } from '../carts/cartRepository.ts'
+import {
+  deleteCartItem,
+  findCartByUserId,
+  findCartWithItems,
+} from '../carts/cartRepository.ts'
 import { updateProductStock } from '../products/productRepository.ts'
 import {
   createOrder,
@@ -12,6 +16,7 @@ import {
   getOrders,
   updateOrderStatus,
 } from './orderRepository.ts'
+import type { OrderStatusInput } from './orderTypes.ts'
 
 export const checkoutService = async (userId: string) => {
   const checkoutTransaction = await db.transaction(async (tx) => {
@@ -122,4 +127,42 @@ export const cancelOrderService = async (
     return getOrder(order.id, userId, tx)
   })
   return cancelTransaction
+}
+
+export const updateOrderStatusService = async (
+  orderId: string,
+  status: OrderStatusInput,
+) => {
+  const order = await findOrderByIdWithItems(orderId)
+
+  if (!order) {
+    throw new NotFoundError('Order not found')
+  }
+
+  const allowedTransitions: Record<OrderStatusInput, OrderStatusInput[]> = {
+    pending: ['processing', 'cancelled'],
+    processing: ['shipped', 'cancelled'],
+    shipped: ['delivered'],
+    delivered: [],
+    cancelled: [],
+  }
+
+  if (!allowedTransitions[order.status]?.includes(status)) {
+    throw new ConflictError('Invalid status transition')
+  }
+  if (status === 'cancelled') {
+    return db.transaction(async (tx) => {
+      // Restore stock
+      for (const item of order.items) {
+        const newStock = item.product.stock + item.quantity
+
+        await updateProductStock(item.productId, newStock, tx)
+      }
+
+      // Update order status
+      return updateOrderStatus(order.id, 'cancelled', tx)
+    })
+  }
+
+  return updateOrderStatus(order.id, status)
 }
