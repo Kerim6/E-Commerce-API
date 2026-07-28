@@ -7,6 +7,7 @@ import authRoutes from './modules/auth/authRoutes.ts'
 import categoryRoutes from './modules/categories/categoryRoutes.ts'
 import productRoutes from './modules/products/productRoutes.ts'
 import cartRoutes from './modules/carts/cartRoute.ts'
+import orderRoutes from './modules/orders/orderRoute.ts'
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/product', productRoutes)
 app.use('/api/v1/item', cartRoutes)
+app.use('/api/v1/order', orderRoutes)
 
 export { app }
 export default app
