@@ -33,10 +33,10 @@ app.get('/health', (req, res) => {
 })
 
 app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/category', categoryRoutes)
-app.use('/api/v1/product', productRoutes)
-app.use('/api/v1/item', cartRoutes)
-app.use('/api/v1/order', orderRoutes)
+app.use('/api/v1/categories', categoryRoutes)
+app.use('/api/v1/products', productRoutes)
+app.use('/api/v1/items', cartRoutes)
+app.use('/api/v1/orders', orderRoutes)
 
 export { app }
 export default app
