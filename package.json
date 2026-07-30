@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "node --watch src/index.ts",
     "start": "node src/index.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "cross-env APP_STAGE=test vitest run",
+    "test:watch": "cross-env APP_STAGE=test vitest",
+    "test:coverage": "cross-env APP_STAGE=test vitest run --coverage",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",

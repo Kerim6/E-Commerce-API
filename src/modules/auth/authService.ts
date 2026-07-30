@@ -52,5 +52,5 @@ export const login = async (data: loginInput) => {
   })
 
   const { password, ...userWithoutPassword } = existingUser
-  return { existingUser: userWithoutPassword, token }
+  return { user: userWithoutPassword, token }
 }
