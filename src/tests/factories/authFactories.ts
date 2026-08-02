@@ -1,4 +1,7 @@
 import type { RegisterInput } from '../../../src/modules/auth/authTypes.ts'
+import db from '../../db/connection.ts'
+import { users } from '../../db/schema/users.ts'
+import { eq } from 'drizzle-orm'
 
 type UserRole = 'user' | 'admin'
 
@@ -16,4 +19,13 @@ export const buildUser = (
     password: options.password ?? 'password123',
     role: options.role ?? 'user',
   }
+}
+
+export const promoteUserToAdmin = async (userId: string) => {
+  const [admin] = await db
+    .update(users)
+    .set({ role: 'admin' })
+    .where(eq(users.id, userId))
+    .returning()
+  return admin
 }

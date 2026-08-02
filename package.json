@@ -13,7 +13,8 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "cross-env NODE_ENV=development APP_STAGE=dev tsx src/db/seed.ts"
+    "db:seed": "cross-env NODE_ENV=development APP_STAGE=dev tsx src/db/seed.ts",
+    "db:seed:test": "cross-env NODE_ENV=test APP_STAGE=test tsx src/db/seed.ts"
   },
   "keywords": [],
   "author": "",
