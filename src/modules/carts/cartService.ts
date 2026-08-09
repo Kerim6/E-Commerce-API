@@ -1,3 +1,4 @@
+import { BadRequestError } from '../../errors/BadRequestError.ts'
 import { ConflictError } from '../../errors/ConflictError .ts'
 import { ForbiddenError } from '../../errors/ForbiddenError.ts'
 import { NotFoundError } from '../../errors/NotFoundError.ts'
@@ -15,6 +16,9 @@ import {
 import type { AddToCartInput, UpdateCartInput } from './cartTypes.ts'
 
 export const addItemToCart = async (input: AddToCartInput, userId: string) => {
+  if (input.quantity <= 0) {
+    throw new BadRequestError('Quantity should not be negative or zero')
+  }
   const product = await findProductById(input.productId)
 
   if (!product) {
@@ -32,12 +36,12 @@ export const addItemToCart = async (input: AddToCartInput, userId: string) => {
   if (existingItem) {
     const newQuantity = existingItem.quantity + input.quantity
     if (newQuantity > product.stock) {
-      throw new ConflictError('The required qunatity is not available')
+      throw new ConflictError('The required quantity is not available')
     }
     return updateCartItemQuantity(existingItem.id, newQuantity)
   }
   if (input.quantity > product.stock) {
-    throw new ConflictError('The required product is not available')
+    throw new ConflictError('The required quantity is not available')
   }
   return createCartItem({
     cartId: cart.id,
