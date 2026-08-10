@@ -53,10 +53,6 @@ export const addItemToCart = async (input: AddToCartInput, userId: string) => {
 export const getCartService = async (userId: string) => {
   const getCart = await findCartWithItems(userId)
 
-  if (!getCart) {
-    throw new NotFoundError('Cart not found')
-  }
-
   return getCart
 }
 
