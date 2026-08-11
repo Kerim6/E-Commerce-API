@@ -62,7 +62,13 @@ export const deleteCartItemController = async (
   res: Response,
 ) => {
   const paramId = req.params.id
-  const deletedItem = await deleteCartItemService(paramId)
+  const userId = req.user?.id
+
+  if (!userId) {
+    throw new UnauthorizedError('Unauthenticated')
+  }
+
+  const deletedItem = await deleteCartItemService(paramId, userId)
 
   return res.status(204).json(deletedItem)
 }

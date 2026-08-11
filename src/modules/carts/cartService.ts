@@ -79,7 +79,7 @@ export const updateCartItemQuantityService = async (
   }
 
   if (quantity === 0) {
-    return deleteCartItemService(item.id)
+    return deleteCartItemService(item.id, userId)
   }
 
   if (quantity > item.product.stock) {
@@ -89,11 +89,17 @@ export const updateCartItemQuantityService = async (
   return updateCartItemQuantity(item.id, quantity)
 }
 
-export const deleteCartItemService = async (itemId: string) => {
+export const deleteCartItemService = async (itemId: string, userId: string) => {
   const item = await findCartItemById(itemId)
 
   if (!item) {
     throw new NotFoundError('Item not found')
+  }
+
+  const cart = await findCartByUserId(userId)
+
+  if (!cart || item.cartId !== cart.id) {
+    throw new ForbiddenError('You are not allowed to access')
   }
 
   return deleteCartItem(item.id)
