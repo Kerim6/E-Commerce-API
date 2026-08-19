@@ -1,38 +1,45 @@
-import { env as loadEnv } from "custom-env";
-import { z } from "zod";
+import { env as loadEnv } from 'custom-env'
+import { z } from 'zod'
+import dotenv from 'dotenv'
 
-process.env.APP_STAGE = process.env.APP_STAGE || "dev";
+process.env.APP_STAGE = process.env.APP_STAGE || 'dev'
 
-const isProduction = process.env.APP_STAGE === "production";
-const isDevelopment = process.env.APP_STAGE === "dev";
-const isTest = process.env.APP_STAGE === "test";
+const isProduction = process.env.APP_STAGE === 'production'
+const isDevelopment = process.env.APP_STAGE === 'dev'
+const isTest = process.env.APP_STAGE === 'test'
 
 if (isDevelopment) {
-  loadEnv();
+  dotenv.config({
+    path: '.env',
+    override: true,
+  })
 } else if (isTest) {
-  loadEnv("test");
+  dotenv.config({
+    path: '.env.test',
+    override: true,
+  })
 }
 
 const envSchema = z.object({
   NODE_ENV: z
-    .enum(["development", "production", "test"])
-    .default("development"),
-  APP_STAGE: z.enum(["dev", "test", "production"]).default("dev"),
+    .enum(['development', 'production', 'test'])
+    .default('development'),
+  APP_STAGE: z.enum(['dev', 'test', 'production']).default('dev'),
 
   PORT: z.coerce.number().positive().default(3000),
-  HOST: z.string().default("localhost"),
+  HOST: z.string().default('localhost'),
 
-  DATABASE_URL: z.string().startsWith("postgresql://"),
+  DATABASE_URL: z.string().startsWith('postgresql://'),
   DATABASE_POOL_MIN: z.coerce.number().min(0).default(2),
   DATABASE_POOL_MAX: z.coerce.number().positive().default(10),
 
   // JWT & Authentication
   JWT_SECRET: z
     .string()
-    .min(32, "JWT_SECRET must be at least 32 characters long"),
-  JWT_EXPIRES_IN: z.string().default("7d"),
+    .min(32, 'JWT_SECRET must be at least 32 characters long'),
+  JWT_EXPIRES_IN: z.string().default('7d'),
   REFRESH_TOKEN_SECRET: z.string().min(32).optional(),
-  REFRESH_TOKEN_EXPIRES_IN: z.string().default("30d"),
+  REFRESH_TOKEN_EXPIRES_IN: z.string().default('30d'),
 
   // Security
   BCRYPT_ROUNDS: z.coerce.number().min(10).max(20).default(12),
@@ -42,47 +49,47 @@ const envSchema = z.object({
     .string()
     .or(z.array(z.string()))
     .transform((val) => {
-      if (typeof val === "string") {
-        return val.split(",").map((origin) => origin.trim());
+      if (typeof val === 'string') {
+        return val.split(',').map((origin) => origin.trim())
       }
     })
     .default([]),
 
   // Logging configuration
   LOG_LEVEL: z
-    .enum(["error", "warn", "info", "debug", "trace"])
-    .default(isProduction ? "info" : "debug"),
-});
+    .enum(['error', 'warn', 'info', 'debug', 'trace'])
+    .default(isProduction ? 'info' : 'debug'),
+})
 
 // type inference from the schema
-export type Env = z.infer<typeof envSchema>;
+export type Env = z.infer<typeof envSchema>
 
 // Parse and validate environment variables
-let env: Env;
+let env: Env
 
 try {
-  env = envSchema.parse(process.env);
+  env = envSchema.parse(process.env)
 } catch (error) {
   if (error instanceof z.ZodError) {
-    console.error("❌ Invalid environment variables:");
-    console.error(JSON.stringify(error.flatten().fieldErrors, null, 2));
+    console.error('❌ Invalid environment variables:')
+    console.error(JSON.stringify(error.flatten().fieldErrors, null, 2))
 
     // Detailed error messages
     error.issues.forEach((err) => {
-      const path = err.path.join(".");
-      console.error(`  ${path}: ${err.message}`);
-    });
+      const path = err.path.join('.')
+      console.error(`  ${path}: ${err.message}`)
+    })
 
-    process.exit(1); // Exit with error code
+    process.exit(1) // Exit with error code
   }
-  throw error;
+  throw error
 }
 
 // Helper functions for environment checks
-export const isProd = () => env.NODE_ENV === "production";
-export const isDev = () => env.NODE_ENV === "development";
-export const isTestEnv = () => env.NODE_ENV === "test";
+export const isProd = () => env.NODE_ENV === 'production'
+export const isDev = () => env.NODE_ENV === 'development'
+export const isTestEnv = () => env.NODE_ENV === 'test'
 
 // Export the validated environment
-export { env };
-export default env;
+export { env }
+export default env

@@ -1,3 +1,4 @@
+import { BadRequestError } from '../../errors/BadRequestError.ts'
 import { ConflictError } from '../../errors/ConflictError .ts'
 import { ForbiddenError } from '../../errors/ForbiddenError.ts'
 import { NotFoundError } from '../../errors/NotFoundError.ts'
@@ -15,6 +16,9 @@ import {
 import type { AddToCartInput, UpdateCartInput } from './cartTypes.ts'
 
 export const addItemToCart = async (input: AddToCartInput, userId: string) => {
+  if (input.quantity <= 0) {
+    throw new BadRequestError('Quantity should not be negative or zero')
+  }
   const product = await findProductById(input.productId)
 
   if (!product) {
@@ -32,12 +36,12 @@ export const addItemToCart = async (input: AddToCartInput, userId: string) => {
   if (existingItem) {
     const newQuantity = existingItem.quantity + input.quantity
     if (newQuantity > product.stock) {
-      throw new ConflictError('The required qunatity is not available')
+      throw new ConflictError('The required quantity is not available')
     }
     return updateCartItemQuantity(existingItem.id, newQuantity)
   }
   if (input.quantity > product.stock) {
-    throw new ConflictError('The required product is not available')
+    throw new ConflictError('The required quantity is not available')
   }
   return createCartItem({
     cartId: cart.id,
@@ -49,10 +53,6 @@ export const addItemToCart = async (input: AddToCartInput, userId: string) => {
 export const getCartService = async (userId: string) => {
   const getCart = await findCartWithItems(userId)
 
-  if (!getCart) {
-    throw new NotFoundError('Cart not found')
-  }
-
   return getCart
 }
 
@@ -62,20 +62,24 @@ export const updateCartItemQuantityService = async (
   quantity: number,
   userId: string,
 ) => {
-  const cart = await findCartByUserId(userId)
-
-  if (!cart) {
-    throw new NotFoundError('Cart not found')
-  }
-
   const item = await findCartItemById(itemId)
 
   if (!item) {
     throw new NotFoundError('Cart item not found')
   }
 
-  if (item.cartId !== cart.id) {
+  const cart = await findCartByUserId(userId)
+
+  if (!cart || item.cartId !== cart.id) {
     throw new ForbiddenError('You are not allowed to access')
+  }
+
+  if (quantity < 0) {
+    throw new BadRequestError('Quantity should not be negative')
+  }
+
+  if (quantity === 0) {
+    return deleteCartItemService(item.id, userId)
   }
 
   if (quantity > item.product.stock) {
@@ -85,11 +89,17 @@ export const updateCartItemQuantityService = async (
   return updateCartItemQuantity(item.id, quantity)
 }
 
-export const deleteCartItemService = async (itemId: string) => {
+export const deleteCartItemService = async (itemId: string, userId: string) => {
   const item = await findCartItemById(itemId)
 
   if (!item) {
     throw new NotFoundError('Item not found')
+  }
+
+  const cart = await findCartByUserId(userId)
+
+  if (!cart || item.cartId !== cart.id) {
+    throw new ForbiddenError('You are not allowed to access')
   }
 
   return deleteCartItem(item.id)

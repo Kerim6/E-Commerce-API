@@ -1,14 +1,14 @@
-import type { Request, Response } from "express";
-import { register, login } from "./authService.ts";
+import type { Request, Response } from 'express'
+import { register, login } from './authService.ts'
 
 export const registeration = async (req: Request, res: Response) => {
-  const user = await register(req.body);
+  const user = await register(req.body)
 
-  return res.status(201).json(user);
-};
+  return res.status(201).json(user)
+}
 
 export const logingIn = async (req: Request, res: Response) => {
-  const user = await login(req.body);
+  const user = await login(req.body)
 
-  return res.status(201).json(user);
-};
+  return res.status(200).json(user)
+}

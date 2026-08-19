@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { type NextFunction, type Request, type Response } from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import { env, isTestEnv } from '../env.ts'
@@ -8,6 +8,7 @@ import categoryRoutes from './modules/categories/categoryRoutes.ts'
 import productRoutes from './modules/products/productRoutes.ts'
 import cartRoutes from './modules/carts/cartRoute.ts'
 import orderRoutes from './modules/orders/orderRoute.ts'
+import { AppError } from './errors/AppError.ts'
 
 const app = express()
 
@@ -33,10 +34,25 @@ app.get('/health', (req, res) => {
 })
 
 app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/category', categoryRoutes)
-app.use('/api/v1/product', productRoutes)
-app.use('/api/v1/item', cartRoutes)
-app.use('/api/v1/order', orderRoutes)
+app.use('/api/v1/categories', categoryRoutes)
+app.use('/api/v1/products', productRoutes)
+app.use('/api/v1/items', cartRoutes)
+app.use('/api/v1/orders', orderRoutes)
+
+app.use(
+  (err: unknown, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof AppError) {
+      return res.status(err.statusCode).json({ message: err.message })
+    }
+
+    if (err instanceof Error) {
+      console.error(err)
+      return res.status(500).json({ message: 'Internal server error' })
+    }
+
+    return res.status(500).json({ message: 'Internal server error' })
+  },
+)
 
 export { app }
 export default app

@@ -68,7 +68,7 @@ export const checkoutService = async (userId: string) => {
       await deleteCartItem(item.id, tx)
     }
 
-    return order
+    return getOrder(order.id, userId, tx)
   })
 
   return checkoutTransaction

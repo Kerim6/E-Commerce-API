@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import { categories } from '../../db/schema/categories.ts'
 
-export const categoryInsertSchema = createInsertSchema(categories)
+export const categoryInsertSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required'),
+  slug: z.string().trim().min(1, 'Slug is required'),
+})

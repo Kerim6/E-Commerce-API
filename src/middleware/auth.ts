@@ -22,14 +22,14 @@ export const authenticate = async (
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      throw new UnauthorizedError("Authorization token is missing");
+      return next(new UnauthorizedError("Authorization token is missing"));
     }
 
     const payload = await verifyToken(token);
     req.user = payload;
-    next();
-  } catch (e) {
-    throw new ForbiddenError("Invalid or expired token");
+    return next();
+  } catch (error) {
+    return next(new UnauthorizedError("Invalid or expired token"));
   }
 };
 
@@ -38,22 +38,22 @@ export const authorize = (...alowedRoles: Role[]) => {
 
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      throw new UnauthorizedError("Unauthorized");
+      return next(new UnauthorizedError("Unauthorized"));
     }
 
     const userRole = req.user?.role;
 
     if (!userRole) {
-      throw new ForbiddenError("Role missing");
+      return next(new ForbiddenError("Role missing"));
     }
 
     if (
       normalizedRoles.length > 0 &&
       !normalizedRoles.includes(userRole.toLowerCase())
     ) {
-      throw new ForbiddenError("Forbbiden");
+      return next(new ForbiddenError("Forbidden"));
     }
 
-    next();
+    return next();
   };
 };
