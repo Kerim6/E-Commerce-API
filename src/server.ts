@@ -1,4 +1,8 @@
-import express, { type NextFunction, type Request, type Response } from 'express'
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import { env, isTestEnv } from '../env.ts'
@@ -9,6 +13,8 @@ import productRoutes from './modules/products/productRoutes.ts'
 import cartRoutes from './modules/carts/cartRoute.ts'
 import orderRoutes from './modules/orders/orderRoute.ts'
 import { AppError } from './errors/AppError.ts'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerSpec } from './config/swagger.ts'
 
 const app = express()
 
@@ -39,20 +45,20 @@ app.use('/api/v1/products', productRoutes)
 app.use('/api/v1/items', cartRoutes)
 app.use('/api/v1/orders', orderRoutes)
 
-app.use(
-  (err: unknown, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof AppError) {
-      return res.status(err.statusCode).json({ message: err.message })
-    }
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({ message: err.message })
+  }
 
-    if (err instanceof Error) {
-      console.error(err)
-      return res.status(500).json({ message: 'Internal server error' })
-    }
-
+  if (err instanceof Error) {
+    console.error(err)
     return res.status(500).json({ message: 'Internal server error' })
-  },
-)
+  }
+
+  return res.status(500).json({ message: 'Internal server error' })
+})
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export { app }
 export default app
