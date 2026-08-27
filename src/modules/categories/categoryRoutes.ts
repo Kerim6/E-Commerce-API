@@ -19,6 +19,41 @@ const uuidSchema = z.object({
 
 router.use(authenticate)
 
+/**
+ * @openapi
+ * /api/v1/categories:
+ *   post:
+ *     summary: Create a new category
+ *     tags:
+ *       - Categories
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - slug
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Electronics
+ *               slug:
+ *                 type: string
+ *                 example: electronics
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthenticated
+ *       403:
+ *         description: User is not authorized
+ *       409:
+ *         description: Category with the same name or slug already exists
+ */
 router.post(
   '/',
   validateRequest('body', categoryInsertSchema),
@@ -26,8 +61,42 @@ router.post(
   createCategoryController,
 )
 
+/**
+ * @openapi
+ * /api/v1/categories:
+ *   get:
+ *     summary: Get all categories
+ *     tags:
+ *       - Categories
+ *     responses:
+ *       200:
+ *         description: Categories retrieved successfully
+ */
 router.get('/', authorize('admin', 'user'), findAllCategoriesController)
 
+/**
+ * @openapi
+ * /api/v1/categories/{id}:
+ *   get:
+ *     summary: Get a category by ID
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Category ID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Category retrieved successfully
+ *       400:
+ *         description: Invalid category ID
+ *       404:
+ *         description: Category not found
+ */
 router.get(
   '/:id',
   validateRequest('params', uuidSchema),
@@ -35,6 +104,48 @@ router.get(
   findCategoryByIdController,
 )
 
+/**
+ * @openapi
+ * /api/v1/categories/{id}:
+ *   patch:
+ *     summary: Update a category
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Category ID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Updated Electronics
+ *               slug:
+ *                 type: string
+ *                 example: updated-electronics
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ *       400:
+ *         description: Invalid category ID or request body
+ *       401:
+ *         description: Unauthenticated
+ *       403:
+ *         description: User is not authorized
+ *       404:
+ *         description: Category not found
+ *       409:
+ *         description: Category with the same name or slug already exists
+ */
 router.put(
   '/:id',
   validateRequest('params', uuidSchema),
@@ -43,6 +154,33 @@ router.put(
   updateCategoryController,
 )
 
+/**
+ * @openapi
+ * /api/v1/categories/{id}:
+ *   delete:
+ *     summary: Delete a category
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Category ID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       204:
+ *         description: Category deleted successfully
+ *       400:
+ *         description: Invalid category ID
+ *       401:
+ *         description: Unauthenticated
+ *       403:
+ *         description: User is not authorized
+ *       404:
+ *         description: Category not found
+ */
 router.delete(
   '/:id',
   validateRequest('params', uuidSchema),
