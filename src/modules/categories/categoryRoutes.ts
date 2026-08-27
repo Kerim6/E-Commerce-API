@@ -17,6 +17,48 @@ const uuidSchema = z.object({
   id: z.uuid(),
 })
 
+/**
+ * @openapi
+ * /api/v1/categories:
+ *   get:
+ *     summary: Get all categories
+ *     tags:
+ *       - Categories
+ *     responses:
+ *       200:
+ *         description: Categories retrieved successfully
+ */
+router.get('/', findAllCategoriesController)
+
+/**
+ * @openapi
+ * /api/v1/categories/{id}:
+ *   get:
+ *     summary: Get a category by ID
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Category ID
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Category retrieved successfully
+ *       400:
+ *         description: Invalid category ID
+ *       404:
+ *         description: Category not found
+ */
+router.get(
+  '/:id',
+  validateRequest('params', uuidSchema),
+  findCategoryByIdController,
+)
+
 router.use(authenticate)
 
 /**
@@ -26,6 +68,8 @@ router.use(authenticate)
  *     summary: Create a new category
  *     tags:
  *       - Categories
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -63,54 +107,13 @@ router.post(
 
 /**
  * @openapi
- * /api/v1/categories:
- *   get:
- *     summary: Get all categories
- *     tags:
- *       - Categories
- *     responses:
- *       200:
- *         description: Categories retrieved successfully
- */
-router.get('/', authorize('admin', 'user'), findAllCategoriesController)
-
-/**
- * @openapi
- * /api/v1/categories/{id}:
- *   get:
- *     summary: Get a category by ID
- *     tags:
- *       - Categories
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Category ID
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Category retrieved successfully
- *       400:
- *         description: Invalid category ID
- *       404:
- *         description: Category not found
- */
-router.get(
-  '/:id',
-  validateRequest('params', uuidSchema),
-  authorize('admin', 'user'),
-  findCategoryByIdController,
-)
-
-/**
- * @openapi
  * /api/v1/categories/{id}:
  *   patch:
  *     summary: Update a category
  *     tags:
  *       - Categories
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -161,6 +164,8 @@ router.put(
  *     summary: Delete a category
  *     tags:
  *       - Categories
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

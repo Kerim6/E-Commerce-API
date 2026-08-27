@@ -70,6 +70,8 @@ router.use(authenticate)
  *     summary: Create a product
  *     tags:
  *       - Products
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -123,6 +125,8 @@ router.post(
  *     summary: Update a product
  *     tags:
  *       - Products
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -182,6 +186,8 @@ router.patch(
  *     summary: Delete a product
  *     tags:
  *       - Products
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
