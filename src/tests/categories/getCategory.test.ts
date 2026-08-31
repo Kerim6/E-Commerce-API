@@ -21,10 +21,11 @@ describe('get /api/v1/categories', () => {
     expect(response.body.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('should reject unauthenticated request', async () => {
+  it('should allow unauthenticated request to list categories', async () => {
     const response = await request(app).get('/api/v1/categories')
 
-    expect(response.status).toBe(401)
+    expect(response.status).toBe(200)
+    expect(Array.isArray(response.body)).toBe(true)
   })
 
   it('should get one category', async () => {

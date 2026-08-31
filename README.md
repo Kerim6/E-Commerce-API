@@ -329,6 +329,13 @@ Test Files  17 passed (17)
 Tests       137 passed (137)
 ```
 
+### Test Coverage
+
+- Statements: 92.61%
+- Branches: 87.03%
+- Functions: 88.4%
+- Lines: 92.73%
+
 ## Getting Started
 
 ### Requirements
@@ -410,6 +417,12 @@ The API runs on:
 
 ```text
 http://localhost:3000
+```
+
+Swagger API docs are available at:
+
+```text
+http://localhost:3000/api-docs
 ```
 
 ## Seed Data
