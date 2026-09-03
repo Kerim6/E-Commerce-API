@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ecommerce_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d ecommerce_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create test environment
+        run: |
+          cat << EOF > .env.test
+          NODE_ENV=test
+          APP_STAGE=test
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ecommerce_test
+          JWT_SECRET=test-jwt-secret-that-is-at-least-32-characters-long
+          BCRYPT_ROUNDS=10
+          EOF
+
+      - name: Run database migrations
+        run: npm run db:migrate
+
+      - name: Run tests
+        run: npm test
