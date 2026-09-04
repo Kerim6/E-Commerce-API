@@ -11,3 +11,5 @@ export default defineConfig({
   verbose: true,
   strict: true,
 })
+console.log('DATABASE_URL starts with:', env.DATABASE_URL.slice(0, 13))
+console.log('DATABASE_URL host:', new URL(env.DATABASE_URL).hostname)
