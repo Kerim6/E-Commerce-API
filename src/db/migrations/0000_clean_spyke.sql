@@ -1,5 +1,5 @@
+CREATE TYPE "public"."order_statusEnum" AS ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('admin', 'user');--> statement-breakpoint
-CREATE TYPE "public"."statusEnum" AS ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled');--> statement-breakpoint
 CREATE TABLE "addresses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -42,28 +42,29 @@ CREATE TABLE "categories" (
 CREATE TABLE "order_addresses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"order_id" uuid NOT NULL,
-	"country" varchar(50),
-	"city" varchar(50),
-	"street" varchar(100),
-	"postal_code" varchar(50),
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"country" varchar(50) NOT NULL,
+	"city" varchar(50) NOT NULL,
+	"street" varchar(100) NOT NULL,
+	"postal_code" varchar(50) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "order_addresses_order_id_unique" UNIQUE("order_id")
 );
 --> statement-breakpoint
 CREATE TABLE "order_items" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"order_id" uuid NOT NULL,
 	"product_id" uuid NOT NULL,
-	"unit_price" numeric NOT NULL,
+	"product_name" varchar(100) NOT NULL,
+	"unit_price" double precision NOT NULL,
 	"quantity" integer NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "orders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
-	"status" "statusEnum" DEFAULT 'pending' NOT NULL,
-	"total_price" numeric NOT NULL,
+	"status" "order_statusEnum" DEFAULT 'pending' NOT NULL,
+	"total_price" double precision NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

@@ -1,5 +1,5 @@
 {
-  "id": "fba5f52c-642c-4517-aeaf-9cdd573fa80c",
+  "id": "617f5a93-cec7-4582-91fa-3fb3945c2e8d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -312,25 +312,25 @@
           "name": "country",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "city": {
           "name": "city",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "street": {
           "name": "street",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "postal_code": {
           "name": "postal_code",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -357,7 +357,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "order_addresses_order_id_unique": {
+          "name": "order_addresses_order_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "order_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -385,9 +393,15 @@
           "primaryKey": false,
           "notNull": true
         },
+        "product_name": {
+          "name": "product_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "unit_price": {
           "name": "unit_price",
-          "type": "numeric",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
@@ -399,13 +413,6 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -466,7 +473,7 @@
         },
         "status": {
           "name": "status",
-          "type": "statusEnum",
+          "type": "order_statusEnum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -474,7 +481,7 @@
         },
         "total_price": {
           "name": "total_price",
-          "type": "numeric",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
@@ -858,16 +865,8 @@
     }
   },
   "enums": {
-    "public.role": {
-      "name": "role",
-      "schema": "public",
-      "values": [
-        "admin",
-        "user"
-      ]
-    },
-    "public.statusEnum": {
-      "name": "statusEnum",
+    "public.order_statusEnum": {
+      "name": "order_statusEnum",
       "schema": "public",
       "values": [
         "pending",
@@ -875,6 +874,14 @@
         "shipped",
         "delivered",
         "cancelled"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "user"
       ]
     }
   },
