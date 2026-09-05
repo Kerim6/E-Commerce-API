@@ -4,10 +4,6 @@ import dotenv from 'dotenv'
 
 process.env.APP_STAGE = process.env.APP_STAGE || 'dev'
 
-console.log('APP_STAGE:', process.env.APP_STAGE)
-console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL)
-console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET)
-
 const isProduction = process.env.APP_STAGE === 'production'
 const isDevelopment = process.env.APP_STAGE === 'dev'
 const isTest = process.env.APP_STAGE === 'test'
